@@ -23,15 +23,16 @@ class App extends React.Component {
     this.state = {
       planets:null,
       planetsPics: [
-        {pic1:Planet1},
-        {pic2:Planet2},
-        {pic3:Planet3},
-        {pic4:Planet4},
-        {pic5:Planet5},
-        {pic6:Planet6},
-        {pic7:Planet7},
-        {pic8:Planet8},
-        {pic9:Planet9},
+        {pic:Planet1},
+        {pic:Planet2},
+        {pic:Planet3},
+        {pic:Planet4},
+        {pic:Planet5},
+        {pic:Planet6},
+        {pic:Planet7},
+        {pic:Planet8},
+        {pic:Planet9},
+        {pic:Planet3},
       ],
       planetCard: null,
     }
@@ -50,6 +51,7 @@ class App extends React.Component {
         ...this.state,
         planets: res,
         planetCard: res[0],
+        planetCardImg: this.state.planetsPics[0]
       });
       console.log(this.state)
     })
@@ -57,31 +59,39 @@ class App extends React.Component {
 
   changePlanet = (key) => {
     const planets = this.state.planets;
-
     const planetCard = planets.filter((item, index) => index === key)[0];
+    const planetCardImg = this.state.planetsPics.filter((item, index) => index ===key)[0];
     
     this.setState({
       ...this.state,
-      planetCard
+      planetCard,
+      planetCardImg
     })
   };
 
   render() {
 
-    const { planets=[], planetCard={} } = this.state;
+    const { planets=[], planetCard={}, planetCardImg={} } = this.state;
 
     return (
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-
+          <h3>Список планет</h3>
           <DataBlock>
-            <ListPlanet 
-              onChangePlanet={this.changePlanet} 
-              planets={planets}
-            />
+            {
+              planets ? 
+              <ListPlanet 
+                onChangePlanet={this.changePlanet} 
+                planets={planets}
+              /> : 
+              <Spinner/>
+            }
 
-            <Planet planet={planetCard}/>
+            {
+              planetCard && <Planet planet={planetCard} img={planetCardImg}/>
+            }
+            
           </DataBlock>
         </header>
       </div>
@@ -90,31 +100,24 @@ class App extends React.Component {
 }
 
 function ListPlanet({planets, onChangePlanet}) {
-  if(planets === null) {
-      return(
-          <Spinner/>
-      )
-  } else {
-      return (
-          <div>
-              <h3>Список планет</h3>
-              <div className='planet_list'>
-                  {
-                      planets.map((item, index) => 
-                          <span 
-                            onClick={() => onChangePlanet(index)}
-                            href="/" 
-                            className='planet-item' 
-                            key={index}
-                          > 
-                              {item.name}
-                          </span>
-                      )
-                  }
-              </div>
+    return (
+      <div>
+          <div className='planet_list'>
+              {
+                  planets.map((item, index) => 
+                      <span 
+                        onClick={() => onChangePlanet(index)}
+                        href="/" 
+                        className='planet-item' 
+                        key={index}
+                      > 
+                          {item.name}
+                      </span>
+                  )
+              }
           </div>
-      )
-  }
+      </div>
+    )
 }
 
 function DataBlock({children}) {
@@ -127,16 +130,11 @@ function DataBlock({children}) {
 
 function Planet (props) {
 
-    const { planet={} } = props
+    const { planet={}, img={} } = props
 
-    if(planet == null) {
-      return (
-        <div></div>
-      )
-    }
     return (
       <div className="planet">
-          <img alt='planet' src={Planet1}/>
+          <img alt='planet' src={img.pic}/>
           <h3 className="planet-name">{planet.name}</h3>
 
           <div className="planet-info">
